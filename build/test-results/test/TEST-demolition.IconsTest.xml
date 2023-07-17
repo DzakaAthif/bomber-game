@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="demolition.IconsTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2022-08-31T03:11:27" hostname="LAPTOP-PT0FPLDG" time="0.015">
+  <properties/>
+  <testcase name="constructor()" classname="demolition.IconsTest" time="0.003"/>
+  <testcase name="tickCounterTest()" classname="demolition.IconsTest" time="0.003"/>
+  <testcase name="updLivesTest()" classname="demolition.IconsTest" time="0.003"/>
+  <testcase name="tickClockTest()" classname="demolition.IconsTest" time="0.002"/>
+  <testcase name="updClockTest()" classname="demolition.IconsTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="demolition.BackgroundObjTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2022-08-31T03:11:27" hostname="LAPTOP-PT0FPLDG" time="0.041">
+  <properties/>
+  <testcase name="goalConstructor()" classname="demolition.BackgroundObjTest" time="0.025"/>
+  <testcase name="emptyConstructor()" classname="demolition.BackgroundObjTest" time="0.0"/>
+  <testcase name="emptyToString()" classname="demolition.BackgroundObjTest" time="0.005"/>
+  <testcase name="brokenToString()" classname="demolition.BackgroundObjTest" time="0.002"/>
+  <testcase name="brokenConstructor()" classname="demolition.BackgroundObjTest" time="0.001"/>
+  <testcase name="wallToString()" classname="demolition.BackgroundObjTest" time="0.0"/>
+  <testcase name="wallConstructor()" classname="demolition.BackgroundObjTest" time="0.001"/>
+  <testcase name="goalToString()" classname="demolition.BackgroundObjTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

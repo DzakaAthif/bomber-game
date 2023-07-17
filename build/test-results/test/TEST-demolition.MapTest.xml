@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="demolition.MapTest" tests="19" skipped="0" failures="0" errors="0" timestamp="2022-08-31T03:11:27" hostname="LAPTOP-PT0FPLDG" time="0.043">
+  <properties/>
+  <testcase name="changeLevelTest()" classname="demolition.MapTest" time="0.002"/>
+  <testcase name="getLevelTest()" classname="demolition.MapTest" time="0.002"/>
+  <testcase name="getNumOfLevelTest()" classname="demolition.MapTest" time="0.002"/>
+  <testcase name="constructor()" classname="demolition.MapTest" time="0.001"/>
+  <testcase name="isResetTimerTest()" classname="demolition.MapTest" time="0.001"/>
+  <testcase name="getCurrClockTest()" classname="demolition.MapTest" time="0.002"/>
+  <testcase name="getCurrLvlTest()" classname="demolition.MapTest" time="0.001"/>
+  <testcase name="doneResetTimerTest()" classname="demolition.MapTest" time="0.003"/>
+  <testcase name="isGameOverTest()" classname="demolition.MapTest" time="0.002"/>
+  <testcase name="getCharactersTest()" classname="demolition.MapTest" time="0.002"/>
+  <testcase name="resetMapTest()" classname="demolition.MapTest" time="0.002"/>
+  <testcase name="gameOverTest()" classname="demolition.MapTest" time="0.002"/>
+  <testcase name="isWinTest()" classname="demolition.MapTest" time="0.001"/>
+  <testcase name="getObjMapTest()" classname="demolition.MapTest" time="0.001"/>
+  <testcase name="getLivesTest()" classname="demolition.MapTest" time="0.001"/>
+  <testcase name="getCurrLvlMapTest()" classname="demolition.MapTest" time="0.002"/>
+  <testcase name="winTest()" classname="demolition.MapTest" time="0.001"/>
+  <testcase name="readConfigTest()" classname="demolition.MapTest" time="0.001"/>
+  <testcase name="getPlayerTest()" classname="demolition.MapTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

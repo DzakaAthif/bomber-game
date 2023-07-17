@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="demolition.BombGuyTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2022-08-31T03:11:27" hostname="LAPTOP-PT0FPLDG" time="0.031">
+  <properties/>
+  <testcase name="updAndGetLivesTest()" classname="demolition.BombGuyTest" time="0.002"/>
+  <testcase name="constructor()" classname="demolition.BombGuyTest" time="0.001"/>
+  <testcase name="createBombTest()" classname="demolition.BombGuyTest" time="0.002"/>
+  <testcase name="isDeadTest()" classname="demolition.BombGuyTest" time="0.001"/>
+  <testcase name="releaseKeyTest()" classname="demolition.BombGuyTest" time="0.001"/>
+  <testcase name="toStringTest()" classname="demolition.BombGuyTest" time="0.002"/>
+  <testcase name="updMapBombTest()" classname="demolition.BombGuyTest" time="0.017"/>
+  <testcase name="isExplodedTest()" classname="demolition.BombGuyTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RedEnemy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Demolition</a> &gt; <a href="index.source.html" class="el_package">demolition</a> &gt; <span class="el_source">RedEnemy.java</span></div><h1>RedEnemy.java</h1><pre class="source lang-java linenums">package demolition;
+
+import processing.core.PImage;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.HashMap;
+import java.util.Set;
+
+public class RedEnemy extends Character{
+
+    private Random rand;
+
+    public RedEnemy(int x, int y, List&lt;PImage&gt; sprites, PImage initSprite) {
+<span class="fc" id="L16">        super(x, y, sprites, initSprite);</span>
+<span class="fc" id="L17">        this.rand = new Random();</span>
+<span class="fc" id="L18">    }</span>
+
+    public void tick() {
+<span class="fc" id="L21">        super.tick();</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">        if (this.counter == 0) {</span>
+<span class="fc" id="L23">            this.counter = 60;</span>
+<span class="fc" id="L24">            this.move(this.map);</span>
+        }
+<span class="fc" id="L26">    }</span>
+
+    public void move(Map map) {
+
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        if (map == null)</span>
+<span class="fc" id="L31">            return;</span>
+
+<span class="fc" id="L33">        List&lt;List&lt;GameObject&gt;&gt; objMap = map.getObjMap();</span>
+
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if (objMap.size() == 0)</span>
+<span class="fc" id="L36">            return;</span>
+
+<span class="nc" id="L38">        HashMap&lt;String, List&lt;Integer&gt;&gt; availableCoor = new HashMap&lt;String, List&lt;Integer&gt;&gt;();</span>
+<span class="nc" id="L39">        List&lt;Integer&gt; coordinate = new ArrayList&lt;Integer&gt;();</span>
+
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        if (this.currDir.equals(&quot;down&quot;)) </span>
+<span class="nc" id="L42">            coordinate = this.possCoor.get(currDir);</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        else if (this.currDir.equals(&quot;up&quot;)) </span>
+<span class="nc" id="L44">            coordinate = this.possCoor.get(currDir);</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        else if (this.currDir.equals(&quot;left&quot;)) </span>
+<span class="nc" id="L46">            coordinate = this.possCoor.get(currDir);</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">        else if (this.currDir.equals(&quot;right&quot;))</span>
+<span class="nc" id="L48">            coordinate = this.possCoor.get(currDir);</span>
+
+<span class="nc" id="L50">        int nextX = coordinate.get(0);</span>
+<span class="nc" id="L51">        int nextY = coordinate.get(1);</span>
+
+<span class="nc" id="L53">        int xPos = nextX/32;</span>
+<span class="nc" id="L54">        int yPos = (nextY-64)/32;</span>
+        
+<span class="nc" id="L56">        GameObject obj = objMap.get(yPos).get(xPos);</span>
+
+<span class="nc bnc" id="L58" title="All 4 branches missed.">        if (obj.toString().equals(&quot;W&quot;) || obj.toString().equals(&quot;B&quot;)) {</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">            for (String direction : possCoor.keySet()) {</span>
+<span class="nc" id="L60">                coordinate = possCoor.get(direction);</span>
+
+<span class="nc" id="L62">                nextX = coordinate.get(0);</span>
+<span class="nc" id="L63">                nextY = coordinate.get(1);</span>
+
+<span class="nc" id="L65">                xPos = nextX/32;</span>
+<span class="nc" id="L66">                yPos = (nextY-64)/32;</span>
+                
+<span class="nc" id="L68">                obj = objMap.get(yPos).get(xPos);</span>
+<span class="nc bnc" id="L69" title="All 4 branches missed.">                if (!(obj.toString().equals(&quot;W&quot;)) &amp;&amp; !(obj.toString().equals(&quot;B&quot;)))</span>
+<span class="nc" id="L70">                    availableCoor.put(direction, coordinate);</span>
+<span class="nc" id="L71">            }</span>
+
+<span class="nc" id="L73">            int random = this.rand.nextInt(availableCoor.size());</span>
+
+<span class="nc" id="L75">            Set&lt;String&gt; setKey = availableCoor.keySet();</span>
+<span class="nc" id="L76">            String[] keys = new String[setKey.size()];</span>
+<span class="nc" id="L77">            setKey.toArray(keys);</span>
+
+<span class="nc" id="L79">            String direction = keys[random];</span>
+<span class="nc" id="L80">            coordinate = availableCoor.get(direction);</span>
+<span class="nc" id="L81">            this.currDir = direction;</span>
+
+<span class="nc" id="L83">            nextX = coordinate.get(0);</span>
+<span class="nc" id="L84">            nextY = coordinate.get(1);</span>
+        }
+
+<span class="nc" id="L87">        this.changeCoor(nextX, nextY);</span>
+        
+<span class="nc" id="L89">    }</span>
+
+    public String toString() {
+<span class="fc" id="L92">        return &quot;R&quot;;</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

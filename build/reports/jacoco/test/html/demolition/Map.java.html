@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Map.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Demolition</a> &gt; <a href="index.source.html" class="el_package">demolition</a> &gt; <span class="el_source">Map.java</span></div><h1>Map.java</h1><pre class="source lang-java linenums">package demolition;
+
+import processing.core.PImage; 
+import processing.core.PApplet;
+import processing.data.JSONObject;
+import processing.data.JSONArray;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
+
+public class Map {
+    
+    private JSONObject config;
+
+    private int numOfLevel;
+    private int currLevel;
+    private int heigtDiff;
+    public boolean reset;
+    private boolean resetTimer;
+    private boolean win;
+    private boolean gameOver;
+
+    private List&lt;List&lt;GameObject&gt;&gt; backObjects;
+    private List&lt;Character&gt; characters;
+    private BombGuy player;
+
+    private PImage solidImage;
+    private PImage brokenImage;
+    private PImage emptyImage;
+    private PImage goalImage;
+    private List&lt;PImage&gt; bGImages;
+    private List&lt;PImage&gt; rEImages;
+    private List&lt;PImage&gt; yEImages;
+
+    public Map(String configFile, PImage solidImage, 
+        PImage brokenImage, PImage emptyImage, 
+        PImage goalImage, List&lt;PImage&gt; bGImages,
+<span class="fc" id="L41">        List&lt;PImage&gt; rEImages, List&lt;PImage&gt; yEImages) {</span>
+
+<span class="fc" id="L43">        String configContent = readConfig(configFile);</span>
+<span class="fc" id="L44">        this.config = JSONObject.parse(configContent);</span>
+<span class="fc" id="L45">        this.numOfLevel = this.config.getJSONArray(&quot;levels&quot;).size();</span>
+
+<span class="fc" id="L47">        this.currLevel = 1;</span>
+<span class="fc" id="L48">        this.heigtDiff = 16;</span>
+<span class="fc" id="L49">        this.reset = false;</span>
+<span class="fc" id="L50">        this.resetTimer = false;</span>
+<span class="fc" id="L51">        this.win = false;</span>
+<span class="fc" id="L52">        this.gameOver = false;</span>
+
+<span class="fc" id="L54">        this.backObjects = new ArrayList&lt;List&lt;GameObject&gt;&gt;();</span>
+<span class="fc" id="L55">        this.characters = new ArrayList&lt;Character&gt;();</span>
+    
+<span class="fc" id="L57">        this.solidImage = solidImage;</span>
+<span class="fc" id="L58">        this.brokenImage = brokenImage;</span>
+<span class="fc" id="L59">        this.emptyImage = emptyImage;</span>
+<span class="fc" id="L60">        this.goalImage = goalImage;</span>
+<span class="fc" id="L61">        this.bGImages = bGImages;</span>
+<span class="fc" id="L62">        this.rEImages = rEImages;</span>
+<span class="fc" id="L63">        this.yEImages = yEImages;</span>
+<span class="fc" id="L64">    }</span>
+
+    public void tick() {
+
+<span class="pc bpc" id="L68" title="3 of 4 branches missed.">        if (this.backObjects.size() == 0 || this.reset) {</span>
+
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            if (this.reset) {</span>
+<span class="fc" id="L71">                this.reset = false;</span>
+<span class="fc" id="L72">                this.resetTimer = true;</span>
+<span class="fc" id="L73">                this.backObjects.clear();</span>
+<span class="fc" id="L74">                this.characters.clear();</span>
+<span class="fc" id="L75">                this.player = null;</span>
+            }
+
+<span class="fc" id="L78">            List&lt;String[]&gt; map = this.getCurrLvlMap();</span>
+            
+<span class="fc bfc" id="L80" title="All 2 branches covered.">            for (int i = 0; i &lt; map.size(); i++) {</span>
+
+<span class="fc" id="L82">                int y = (i * 32) + 64;</span>
+<span class="fc" id="L83">                int yChar = y - this.heigtDiff;</span>
+<span class="fc" id="L84">                String[] line = map.get(i);</span>
+<span class="fc" id="L85">                List&lt;GameObject&gt; aLineOfObj = new ArrayList&lt;GameObject&gt;();</span>
+                
+<span class="fc bfc" id="L87" title="All 2 branches covered.">                for (int j = 0; j &lt; line.length; j++) {</span>
+<span class="fc" id="L88">                    int x = j * 32;</span>
+<span class="fc" id="L89">                    String obj = line[j];</span>
+
+<span class="fc bfc" id="L91" title="All 2 branches covered.">                    if (obj.equals(&quot;W&quot;))</span>
+<span class="fc" id="L92">                        aLineOfObj.add(new Wall(x, y, this.solidImage));</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                    else if (obj.equals(&quot;B&quot;))</span>
+<span class="fc" id="L94">                        aLineOfObj.add(new BrokenWall(x, y, this.brokenImage));</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">                    else if (obj.equals(&quot;G&quot;))</span>
+<span class="fc" id="L96">                        aLineOfObj.add(new Goal(x, y, this.goalImage));</span>
+                    else
+<span class="fc" id="L98">                        aLineOfObj.add(new EmptySpace(x, y, this.emptyImage));</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">                        if (obj.equals(&quot;P&quot;)) {</span>
+<span class="fc" id="L100">                            this.player = new BombGuy(x, yChar, this.bGImages, </span>
+<span class="fc" id="L101">                                this.bGImages.get(0));</span>
+                        }          
+<span class="fc bfc" id="L103" title="All 2 branches covered.">                        else if (obj.equals(&quot;R&quot;)) {</span>
+<span class="fc" id="L104">                            this.characters.add(new RedEnemy(x, yChar, this.rEImages, </span>
+<span class="fc" id="L105">                                this.rEImages.get(0)));</span>
+                        }
+<span class="fc bfc" id="L107" title="All 2 branches covered.">                        else if (obj.equals(&quot;Y&quot;)) {</span>
+<span class="fc" id="L108">                            this.characters.add(new YellowEnemy(x, yChar, this.yEImages, </span>
+<span class="fc" id="L109">                                this.yEImages.get(0)));</span>
+                        }
+                }
+                
+<span class="fc" id="L113">                this.backObjects.add(aLineOfObj);</span>
+            }
+        }
+<span class="fc" id="L116">    }</span>
+
+    public void draw(PApplet app) {
+
+<span class="nc" id="L120">        List&lt;List&lt;GameObject&gt;&gt; map = this.backObjects;</span>
+
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        for (int i = 0; i &lt; map.size(); i++) {</span>
+<span class="nc" id="L123">            List&lt;GameObject&gt; line = map.get(i);</span>
+
+<span class="nc bnc" id="L125" title="All 2 branches missed.">            for (int j = 0; j &lt; line.size(); j++) {</span>
+<span class="nc" id="L126">                GameObject obj = line.get(j);</span>
+<span class="nc" id="L127">                obj.draw(app);</span>
+            }
+
+        }
+        
+<span class="nc" id="L132">    }</span>
+
+    public List&lt;String[]&gt; getCurrLvlMap() {
+
+<span class="fc" id="L136">        JSONObject currLvl = getCurrLvl();</span>
+        
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        if (currLvl == null)</span>
+<span class="nc" id="L139">            return null;</span>
+
+<span class="fc" id="L141">        String fileName = currLvl.getString(&quot;path&quot;);</span>
+<span class="fc" id="L142">        List&lt;String&gt; configContent = new ArrayList&lt;String&gt;();</span>
+
+        try {
+
+<span class="fc" id="L146">            File f = new File(fileName);</span>
+<span class="fc" id="L147">            Scanner scan = new Scanner(f);</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">            while (scan.hasNextLine())</span>
+<span class="fc" id="L149">                configContent.add(scan.nextLine());</span>
+            
+<span class="fc" id="L151">            scan.close();</span>
+
+<span class="nc" id="L153">        } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L154">            e.printStackTrace();</span>
+<span class="fc" id="L155">        }</span>
+
+<span class="fc" id="L157">        List&lt;String[]&gt; map = new ArrayList&lt;String[]&gt;();</span>
+
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        for (String line : configContent) {</span>
+<span class="fc" id="L160">            String[] arrOfLine = line.split(&quot;&quot;);</span>
+<span class="fc" id="L161">            map.add(arrOfLine);</span>
+<span class="fc" id="L162">        }</span>
+
+<span class="fc" id="L164">        return map;</span>
+
+    }
+
+    public JSONObject getCurrLvl() {
+
+<span class="fc" id="L170">        String fileName = String.format(&quot;level%s.txt&quot;, this.currLevel);</span>
+<span class="fc" id="L171">        JSONArray levels = this.config.getJSONArray(&quot;levels&quot;);</span>
+<span class="fc" id="L172">        JSONObject foundLevel = null;</span>
+
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">        for (int i = 0; i &lt; levels.size(); i++) {</span>
+<span class="fc" id="L175">            JSONObject level = levels.getJSONObject(i);</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">            if (level.getString(&quot;path&quot;).equals(fileName)) {</span>
+<span class="fc" id="L177">                foundLevel = level;</span>
+<span class="fc" id="L178">                break;</span>
+            }
+        }
+
+<span class="fc" id="L182">        return foundLevel;</span>
+    }
+
+    public static String readConfig(String configFile) {
+
+<span class="fc" id="L187">        String configContent = &quot;&quot;;</span>
+
+        try {
+<span class="fc" id="L190">            File f = new File(configFile);</span>
+<span class="fc" id="L191">            Scanner scan = new Scanner(f);</span>
+
+<span class="fc bfc" id="L193" title="All 2 branches covered.">            while (scan.hasNextLine())</span>
+<span class="fc" id="L194">                configContent += scan.nextLine();</span>
+            
+<span class="fc" id="L196">            scan.close();</span>
+<span class="fc" id="L197">            return configContent;</span>
+
+<span class="nc" id="L199">        } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L200">            e.printStackTrace();</span>
+        }
+
+<span class="nc" id="L203">        return null;</span>
+    }
+
+    public void win() {
+<span class="fc" id="L207">        this.win = true;</span>
+<span class="fc" id="L208">    }</span>
+
+    public boolean isWin() {
+<span class="fc" id="L211">        return this.win;</span>
+    }
+
+    public void gameOver() {
+<span class="fc" id="L215">        this.gameOver = true;</span>
+<span class="fc" id="L216">    }</span>
+
+    public boolean isGameOver() {
+<span class="fc" id="L219">        return this.gameOver;</span>
+    }
+
+    public void resetMap() {
+<span class="fc" id="L223">        this.reset = true;</span>
+<span class="fc" id="L224">    }</span>
+
+    public int getCurrClock() {
+<span class="fc" id="L227">        JSONObject currLvl = getCurrLvl();</span>
+<span class="fc" id="L228">        return currLvl.getInt(&quot;time&quot;);</span>
+    }
+
+    public int getLives() {
+<span class="fc" id="L232">        return this.config.getInt(&quot;lives&quot;);</span>
+    }
+
+    public List&lt;Character&gt; getCharacters() {
+<span class="fc" id="L236">        return this.characters;</span>
+    }
+
+    public List&lt;List&lt;GameObject&gt;&gt; getObjMap() {
+<span class="fc" id="L240">        return this.backObjects;</span>
+    }
+
+    public BombGuy getPlayer() {
+<span class="fc" id="L244">        return this.player;</span>
+    }
+    
+    public int getNumOfLevel() {
+<span class="fc" id="L248">        return this.numOfLevel;</span>
+    }
+
+    public int getLevel() {
+<span class="fc" id="L252">        return this.currLevel;</span>
+    }
+
+    public void changeLevel() {
+<span class="fc" id="L256">        this.currLevel += 1;</span>
+<span class="fc" id="L257">    }</span>
+
+    public PImage getEmptyImage() {
+<span class="nc" id="L260">        return this.emptyImage;</span>
+    }
+
+    public boolean isResetTimer() {
+<span class="fc" id="L264">        return this.resetTimer;</span>
+    }
+
+    public void doneResetTimer() {
+<span class="fc" id="L268">        this.resetTimer = false;</span>
+<span class="fc" id="L269">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

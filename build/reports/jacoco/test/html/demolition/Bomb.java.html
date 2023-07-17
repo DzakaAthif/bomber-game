@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Bomb.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Demolition</a> &gt; <a href="index.source.html" class="el_package">demolition</a> &gt; <span class="el_source">Bomb.java</span></div><h1>Bomb.java</h1><pre class="source lang-java linenums">package demolition;
+
+import processing.core.PImage; 
+import processing.core.PApplet; 
+
+import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Bomb extends GameObject{
+    
+    private List&lt;PImage&gt; bombImages;
+    private HashMap&lt;String, PImage&gt; expImages;
+    private HashMap&lt;List&lt;Integer&gt;, PImage&gt; possImages;
+    private HashMap&lt;List&lt;Integer&gt;, PImage&gt; selImages;
+    private HashMap&lt;String, List&lt;Integer&gt;&gt; nextCoor1;
+    private HashMap&lt;String, List&lt;Integer&gt;&gt; nextCoor2;
+    private boolean exploded;
+    private boolean startExplosion;
+    private boolean dead;
+    public Map map;
+    private int explodeCount;
+    private int counter;
+    private int counter1;
+    private int imageNum;
+
+    public Bomb(int x, int y, List&lt;PImage&gt; bombSprites, List&lt;PImage&gt; expSprites, PImage initBombImage) {
+<span class="fc" id="L29">        super(x, y, initBombImage);</span>
+
+<span class="fc" id="L31">        this.possImages = new HashMap&lt;List&lt;Integer&gt;, PImage&gt;();</span>
+<span class="fc" id="L32">        this.selImages = new HashMap&lt;List&lt;Integer&gt;, PImage&gt;();</span>
+<span class="fc" id="L33">        this.nextCoor1 = new HashMap&lt;String, List&lt;Integer&gt;&gt;();</span>
+<span class="fc" id="L34">        this.nextCoor2 = new HashMap&lt;String, List&lt;Integer&gt;&gt;();</span>
+<span class="fc" id="L35">        this.bombImages = bombSprites;</span>
+<span class="fc" id="L36">        this.expImages = new HashMap&lt;String, PImage&gt;();</span>
+
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if (expSprites != null) {</span>
+<span class="nc" id="L39">            String[] pos = {&quot;centre&quot;, &quot;horizontal&quot;, &quot;vertical&quot;, &quot;end_bottom&quot;, </span>
+                &quot;end_left&quot;, &quot;end_right&quot;, &quot;end_top&quot;};
+
+<span class="nc bnc" id="L42" title="All 2 branches missed.">            for (int i = 0; i &lt; pos.length; i++) {</span>
+<span class="nc" id="L43">                this.expImages.put(pos[i], expSprites.get(i));</span>
+            }
+        }
+
+<span class="fc" id="L47">        this.getSelImages();</span>
+
+<span class="fc" id="L49">        this.exploded = false;</span>
+<span class="fc" id="L50">        this.startExplosion = false;</span>
+<span class="fc" id="L51">        this.dead = false;</span>
+<span class="fc" id="L52">        this.counter = 15;</span>
+<span class="fc" id="L53">        this.counter1 = 30;</span>
+<span class="fc" id="L54">        this.imageNum = 0;</span>
+<span class="fc" id="L55">        this.explodeCount = 0;</span>
+<span class="fc" id="L56">    }</span>
+
+    public void tick() {
+<span class="nc" id="L59">        this.counter--;</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if (this.counter == 0) {</span>
+<span class="nc" id="L61">            this.counter = 15;</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">            if (this.exploded == false)</span>
+<span class="nc" id="L63">                this.changeImage();</span>
+        }
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (this.startExplosion) {</span>
+<span class="nc" id="L66">            this.counter1--;</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">            if (this.counter1 == 0) {</span>
+<span class="nc" id="L68">                this.dead = true;</span>
+            }
+        }
+<span class="nc" id="L71">    }</span>
+
+    public void draw(PApplet app) {
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if (this.startExplosion) {</span>
+<span class="nc" id="L75">            this.drawExplosion(app);</span>
+        } else
+<span class="nc" id="L77">            super.draw(app);</span>
+<span class="nc" id="L78">    }</span>
+
+    public void changeImage() {
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (this.imageNum == 7)</span>
+<span class="nc" id="L82">            this.exploded = true;</span>
+        else
+<span class="nc" id="L84">            this.imageNum += 1;</span>
+
+<span class="nc" id="L86">        this.sprite = this.bombImages.get(this.imageNum);</span>
+<span class="nc" id="L87">    }</span>
+
+    public void explode(Map map) {
+<span class="nc" id="L90">        this.startExplosion = true;</span>
+<span class="nc" id="L91">        this.explodeCount+=1;</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (explodeCount == 1) {</span>
+<span class="nc" id="L93">            List&lt;List&lt;GameObject&gt;&gt; objMap = map.getObjMap();</span>
+<span class="nc" id="L94">            String[] dirs = {&quot;bottom&quot;, &quot;top&quot;, &quot;left&quot;, &quot;right&quot;};</span>
+
+<span class="nc bnc" id="L96" title="All 2 branches missed.">            for (String direction : dirs) {</span>
+<span class="nc" id="L97">                int index = 1;</span>
+<span class="nc" id="L98">                HashMap&lt;String, List&lt;Integer&gt;&gt; nextCoor = this.nextCoor1;</span>
+                while (true) {
+<span class="nc" id="L100">                    String key = String.format(&quot;%s%d&quot;, direction, index);</span>
+<span class="nc" id="L101">                    List&lt;Integer&gt; coordinate = nextCoor.get(key);</span>
+<span class="nc" id="L102">                    int xPos = coordinate.get(0)/32;</span>
+<span class="nc" id="L103">                    int yPos = (coordinate.get(1)-64)/32;</span>
+
+<span class="nc" id="L105">                    GameObject obj = objMap.get(yPos).get(xPos);</span>
+                    
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                    if (!(obj.toString().equals(&quot;W&quot;))) {</span>
+<span class="nc" id="L108">                        this.selImages.put(coordinate, this.possImages.get(coordinate));</span>
+<span class="nc bnc" id="L109" title="All 4 branches missed.">                        if (index == 1 &amp;&amp; !(obj.toString().equals(&quot;B&quot;))) {</span>
+<span class="nc" id="L110">                            index+=1;</span>
+<span class="nc" id="L111">                            nextCoor = this.nextCoor2;</span>
+<span class="nc" id="L112">                            continue;</span>
+                        }
+                    }
+                    break;
+                }
+            }
+
+<span class="nc" id="L119">            List&lt;Character&gt; characters = map.getCharacters();</span>
+<span class="nc" id="L120">            BombGuy player = map.getPlayer();</span>
+
+<span class="nc" id="L122">            List&lt;Character&gt; removeChars = new ArrayList&lt;Character&gt;();</span>
+<span class="nc" id="L123">            List&lt;List&lt;Integer&gt;&gt; removeObj =  new ArrayList&lt;List&lt;Integer&gt;&gt;();</span>
+<span class="nc" id="L124">            PImage emptyImage = map.getEmptyImage();</span>
+
+<span class="nc bnc" id="L126" title="All 2 branches missed.">            for (List&lt;Integer&gt; coordinate : this.selImages.keySet()) {</span>
+<span class="nc" id="L127">                    int xPos = coordinate.get(0);</span>
+<span class="nc" id="L128">                    int yPos = coordinate.get(1);</span>
+
+<span class="nc bnc" id="L130" title="All 2 branches missed.">                    for (Character character : characters) {</span>
+<span class="nc" id="L131">                        int xChar = character.getRealX();</span>
+<span class="nc" id="L132">                        int yChar = character.getRealY();</span>
+<span class="nc bnc" id="L133" title="All 4 branches missed.">                        if (xChar == xPos &amp;&amp; yChar == yPos) {</span>
+<span class="nc" id="L134">                            removeChars.add(character);</span>
+                        }
+<span class="nc" id="L136">                    }</span>
+
+<span class="nc bnc" id="L138" title="All 4 branches missed.">                    if (player.getRealX() == xPos &amp;&amp; player.getRealY() == yPos) {</span>
+<span class="nc" id="L139">                        player.updLives();</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">                        if (player.getLives() == 0)</span>
+<span class="nc" id="L141">                            map.gameOver();</span>
+<span class="nc" id="L142">                        map.resetMap();</span>
+                    }
+
+<span class="nc" id="L145">                    int xGrid = xPos/32;</span>
+<span class="nc" id="L146">                    int yGrid = (yPos-64)/32;</span>
+
+<span class="nc" id="L148">                    GameObject obj = objMap.get(yGrid).get(xGrid);</span>
+
+<span class="nc bnc" id="L150" title="All 2 branches missed.">                    if(obj.toString().equals(&quot;B&quot;)) {</span>
+<span class="nc" id="L151">                        removeObj.add(coordinate);</span>
+                    }
+<span class="nc" id="L153">            }</span>
+
+<span class="nc bnc" id="L155" title="All 2 branches missed.">            for (Character character : removeChars) {</span>
+<span class="nc" id="L156">                characters.remove(character);</span>
+<span class="nc" id="L157">            }</span>
+            
+<span class="nc bnc" id="L159" title="All 2 branches missed.">            for (List&lt;Integer&gt; coordinate : removeObj) {</span>
+<span class="nc" id="L160">                int xPos = coordinate.get(0);</span>
+<span class="nc" id="L161">                int yPos = coordinate.get(1);</span>
+<span class="nc" id="L162">                int xGrid = xPos/32;</span>
+<span class="nc" id="L163">                int yGrid = (yPos-64)/32;</span>
+<span class="nc" id="L164">                objMap.get(yGrid).set(xGrid, new EmptySpace(xPos, yPos, emptyImage));</span>
+<span class="nc" id="L165">            }</span>
+        }
+<span class="nc" id="L167">    }</span>
+
+    public void drawExplosion(PApplet app) {
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        for (List&lt;Integer&gt; coordinate : this.selImages.keySet()) {</span>
+<span class="nc" id="L171">            app.image(this.selImages.get(coordinate), coordinate.get(0), coordinate.get(1));</span>
+<span class="nc" id="L172">        }</span>
+<span class="nc" id="L173">    }</span>
+
+    public void getSelImages() {
+
+<span class="fc" id="L177">        Integer[][] possCoor1 = {{this.x, this.y+32}, </span>
+<span class="fc" id="L178">            {this.x, this.y-32}, {this.x-32, this.y}, </span>
+<span class="fc" id="L179">            {this.x+32, this.y}};</span>
+<span class="fc" id="L180">        Integer[][] possCoor2 = {{this.x, this.y+64}, </span>
+<span class="fc" id="L181">            {this.x, this.y-64}, {this.x-64, this.y}, </span>
+<span class="fc" id="L182">            {this.x+64, this.y}};</span>
+
+<span class="fc" id="L184">        Integer[] centreCoor = {this.x, this.y};</span>
+<span class="fc" id="L185">        this.selImages.put(Arrays.asList(centreCoor), </span>
+<span class="fc" id="L186">            this.expImages.get(&quot;centre&quot;));</span>
+
+<span class="fc" id="L188">        String[] keys1 = {&quot;vertical&quot;, &quot;vertical&quot;, &quot;horizontal&quot;, &quot;horizontal&quot;};</span>
+<span class="fc" id="L189">        String[] keys2 = {&quot;end_bottom&quot;, &quot;end_top&quot;, &quot;end_left&quot;, &quot;end_right&quot;};</span>
+<span class="fc" id="L190">        String[] dir1 = {&quot;bottom1&quot;, &quot;top1&quot;, &quot;left1&quot;, &quot;right1&quot;};</span>
+<span class="fc" id="L191">        String[] dir2 = {&quot;bottom2&quot;, &quot;top2&quot;, &quot;left2&quot;, &quot;right2&quot;};</span>
+
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        for (int i = 0; i &lt; possCoor1.length; i++) {</span>
+<span class="fc" id="L194">            List&lt;Integer&gt; coordinate1 = Arrays.asList(possCoor1[i]);</span>
+<span class="fc" id="L195">            List&lt;Integer&gt; coordinate2 = Arrays.asList(possCoor2[i]);</span>
+
+<span class="fc" id="L197">            this.possImages.put(coordinate1, this.expImages.get(keys1[i]));</span>
+<span class="fc" id="L198">            this.possImages.put(coordinate2, this.expImages.get(keys2[i]));</span>
+<span class="fc" id="L199">            this.nextCoor1.put(dir1[i], coordinate1);</span>
+<span class="fc" id="L200">            this.nextCoor2.put(dir2[i], coordinate2);</span>
+
+        }
+
+<span class="fc" id="L204">    }</span>
+
+    public void updMap(Map map) {
+<span class="fc" id="L207">        this.map = map;</span>
+<span class="fc" id="L208">    } </span>
+
+    public boolean isExploded() {
+<span class="fc" id="L211">        return this.exploded;</span>
+    }
+
+    public boolean isDead() {
+<span class="fc" id="L215">        return this.dead;</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

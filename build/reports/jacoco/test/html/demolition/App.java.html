@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>App.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Demolition</a> &gt; <a href="index.source.html" class="el_package">demolition</a> &gt; <span class="el_source">App.java</span></div><h1>App.java</h1><pre class="source lang-java linenums">package demolition;
+
+import processing.core.PApplet;
+import processing.core.PImage;
+import processing.core.PFont;
+import processing.event.KeyEvent;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class App extends PApplet {
+
+    public static final int WIDTH = 480;
+    public static final int HEIGHT = 480;
+
+    public static final int FPS = 60;
+
+<span class="nc" id="L18">    private final String CONFIGFILENAME = &quot;config.json&quot;;</span>
+    private Map map;
+    private int lives;
+    private int timer;
+
+    private BombGuy player;
+    private Icons icons;
+    private List&lt;Character&gt; characters;
+
+    private PFont font;
+
+    public PImage solidImage;
+    public PImage brokenImage;
+    public PImage emptyImage;
+    public PImage goalImage;
+    public PImage liveImage;
+    public PImage clockImage;
+    private List&lt;PImage&gt; bombImages;
+    private List&lt;PImage&gt; expImages;
+    private List&lt;PImage&gt; bGImages;
+    private List&lt;PImage&gt; rEImages;
+    private List&lt;PImage&gt; yEImages;
+
+<span class="nc" id="L41">    public App() {</span>
+<span class="nc" id="L42">        this.characters =  new ArrayList&lt;Character&gt;();</span>
+
+<span class="nc" id="L44">        this.bombImages = new ArrayList&lt;PImage&gt;();</span>
+<span class="nc" id="L45">        this.expImages = new ArrayList&lt;PImage&gt;();</span>
+<span class="nc" id="L46">        this.bGImages = new ArrayList&lt;PImage&gt;();</span>
+<span class="nc" id="L47">        this.rEImages = new ArrayList&lt;PImage&gt;();</span>
+<span class="nc" id="L48">        this.yEImages = new ArrayList&lt;PImage&gt;();</span>
+<span class="nc" id="L49">    }</span>
+
+    public void settings() {
+<span class="nc" id="L52">        size(WIDTH, HEIGHT);</span>
+<span class="nc" id="L53">    }</span>
+
+    public void setup() {
+<span class="nc" id="L56">        frameRate(FPS);</span>
+
+<span class="nc" id="L58">        this.font = createFont(&quot;src/main/resources/PressStart2P-Regular.ttf&quot;, 16, true);</span>
+
+        // Load images during setup
+<span class="nc" id="L61">        this.solidImage = this.loadImage(&quot;src/main/resources/wall/solid.png&quot;);</span>
+<span class="nc" id="L62">        this.brokenImage = this.loadImage(&quot;src/main/resources/broken/broken.png&quot;);</span>
+<span class="nc" id="L63">        this.emptyImage = this.loadImage(&quot;src/main/resources/empty/empty.png&quot;);</span>
+<span class="nc" id="L64">        this.goalImage = this.loadImage(&quot;src/main/resources/goal/goal.png&quot;);</span>
+<span class="nc" id="L65">        this.liveImage = this.loadImage(&quot;src/main/resources/icons/player.png&quot;);</span>
+<span class="nc" id="L66">        this.clockImage = this.loadImage(&quot;src/main/resources/icons/clock.png&quot;);</span>
+
+<span class="nc" id="L68">        String[] pos = {&quot;centre&quot;, &quot;horizontal&quot;, &quot;vertical&quot;, &quot;end_bottom&quot;, </span>
+            &quot;end_left&quot;, &quot;end_right&quot;, &quot;end_top&quot;};
+
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        for (int i = 0; i &lt; 8; i++) {</span>
+<span class="nc" id="L72">            int index = i + 1;</span>
+<span class="nc" id="L73">            String bombPath = String.format(&quot;src/main/resources/bomb/bomb%d.png&quot;, index);</span>
+<span class="nc" id="L74">            PImage bombSprite = this.loadImage(bombPath);</span>
+<span class="nc" id="L75">            this.bombImages.add(bombSprite);</span>
+
+<span class="nc bnc" id="L77" title="All 2 branches missed.">            if (i &lt; 7) {</span>
+<span class="nc" id="L78">                String expPath = String.format(&quot;src/main/resources/explosion/%s.png&quot;, pos[i]);</span>
+<span class="nc" id="L79">                PImage expSprite = this.loadImage(expPath);</span>
+<span class="nc" id="L80">                this.expImages.add(expSprite);</span>
+            }
+            
+        }
+
+<span class="nc" id="L85">        String[] directions = {&quot;_down&quot;, &quot;_up&quot;, &quot;_left&quot;, &quot;_right&quot;};</span>
+
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        for (String direction : directions) {</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">            for (int i = 0; i &lt; 4; i++) {</span>
+<span class="nc" id="L89">                int index = i + 1;</span>
+<span class="nc" id="L90">                String bGPath = String.format(&quot;src/main/resources/player/player%s%d.png&quot;, direction, index);</span>
+<span class="nc" id="L91">                PImage bGSprite = this.loadImage(bGPath);</span>
+
+<span class="nc" id="L93">                String rEPath = String.format(&quot;src/main/resources/red_enemy/red%s%d.png&quot;, direction, index);</span>
+<span class="nc" id="L94">                PImage rESprite = this.loadImage(rEPath);</span>
+                
+<span class="nc" id="L96">                String yEPath = String.format(&quot;src/main/resources/yellow_enemy/yellow%s%d.png&quot;, direction, index);</span>
+<span class="nc" id="L97">                PImage yESprite = this.loadImage(yEPath);</span>
+
+<span class="nc" id="L99">                this.bGImages.add(bGSprite);</span>
+<span class="nc" id="L100">                this.rEImages.add(rESprite);</span>
+<span class="nc" id="L101">                this.yEImages.add(yESprite);</span>
+            }
+        }
+
+<span class="nc" id="L105">        this.map = new Map(CONFIGFILENAME, this.solidImage, </span>
+            this.brokenImage, this.emptyImage, 
+            this.goalImage, this.bGImages, 
+            this.rEImages, this.yEImages);
+
+<span class="nc" id="L110">        this.lives = this.map.getLives();</span>
+<span class="nc" id="L111">        this.timer = this.map.getCurrClock();</span>
+<span class="nc" id="L112">        this.icons = new Icons(4*32, 8*32, 16, this.liveImage, </span>
+            this.clockImage, this.font, this.lives, 
+            this.timer, this.map);
+        
+<span class="nc" id="L116">    }</span>
+
+    public void draw() {
+
+<span class="nc" id="L120">        background(239, 129, 0);</span>
+<span class="nc" id="L121">        textFont(this.font, 20);</span>
+<span class="nc" id="L122">        fill(0);</span>
+
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        if (this.map.isWin()) {</span>
+<span class="nc" id="L125">            text(&quot;YOU WIN&quot;, 160, 220);</span>
+
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        } else if (this.map.isGameOver()) {</span>
+<span class="nc" id="L128">            text(&quot;GAME OVER&quot;, 145, 220);</span>
+
+        } else {
+<span class="nc" id="L131">            this.map.tick();</span>
+<span class="nc" id="L132">            this.characters = this.map.getCharacters();</span>
+<span class="nc" id="L133">            this.player = this.map.getPlayer();</span>
+
+<span class="nc" id="L135">            this.player.updLives(this.lives);        </span>
+<span class="nc" id="L136">            this.player.updMap(this.map);</span>
+<span class="nc" id="L137">            this.player.tick();</span>
+
+<span class="nc" id="L139">            this.lives = this.player.getLives();</span>
+<span class="nc" id="L140">            this.icons.updLives(this.lives);</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            if (this.map.isResetTimer())</span>
+<span class="nc" id="L142">                this.icons.updClock(this.map.getCurrClock(), this.map);</span>
+<span class="nc" id="L143">            this.icons.tick();</span>
+
+<span class="nc bnc" id="L145" title="All 2 branches missed.">            for (Character character : this.characters) {</span>
+<span class="nc" id="L146">                character.updMap(this.map);</span>
+<span class="nc" id="L147">                character.tick();</span>
+<span class="nc" id="L148">            }</span>
+
+            //######## for drawing #########
+
+<span class="nc" id="L152">            this.map.draw(this);</span>
+
+<span class="nc" id="L154">            this.icons.draw(this);</span>
+
+<span class="nc bnc" id="L156" title="All 2 branches missed.">            for (Character character : this.characters) {</span>
+<span class="nc" id="L157">                character.draw(this);</span>
+<span class="nc" id="L158">            }</span>
+
+<span class="nc" id="L160">            this.player.draw(this);</span>
+        }
+
+<span class="nc" id="L163">    }</span>
+
+    public void keyPressed(KeyEvent e) {
+<span class="nc" id="L166">        int keyCode = e.getKeyCode();</span>
+
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        if (keyCode == 32 ) {</span>
+<span class="nc" id="L169">            this.player.createBomb(this.bombImages, this.expImages, </span>
+<span class="nc" id="L170">                this.bombImages.get(0));</span>
+<span class="nc" id="L171">            return;</span>
+        }
+
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if (keyCode == 39 ) {</span>
+<span class="nc" id="L175">            this.player.changeDirection(&quot;right&quot;);</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        } else if (keyCode == 37 ) {</span>
+<span class="nc" id="L177">            this.player.changeDirection(&quot;left&quot;);</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">        } else if (keyCode == 38 ) {</span>
+<span class="nc" id="L179">            this.player.changeDirection(&quot;up&quot;);</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        } else if (keyCode == 40 ) {</span>
+<span class="nc" id="L181">            this.player.changeDirection(&quot;down&quot;);</span>
+        }
+<span class="nc" id="L183">        this.player.move(this.map);</span>
+        
+<span class="nc" id="L185">    }</span>
+
+    public void keyReleased() {
+<span class="nc" id="L188">        this.player.releaseKey();</span>
+<span class="nc" id="L189">    }</span>
+
+    public static void main(String[] args) {
+<span class="nc" id="L192">        PApplet.main(&quot;demolition.App&quot;);</span>
+<span class="nc" id="L193">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
